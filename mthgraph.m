@@ -29,6 +29,7 @@ fin_prog = 0;
 %while ~fin_prog,
    % clc;
 for i=9:16
+    
     disp('Identification des paramètres Kx et TauX par la méthode graphique.')
     disp('')
 
