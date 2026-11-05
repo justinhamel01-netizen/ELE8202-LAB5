@@ -127,8 +127,6 @@ while ~fin_prog,
 % départ de la boucle à n=2 pour avoir la mesure n-1 valide...
 % attention: y = mesure actuelle et h = mesures précédentes... 
 %(selon ce que vous avez vu en classe)
-disp('IL FAUT PROGRAMMER LA BOUCLE...  VOIR LA SECTION CORRESPONDANTE DANS LE FICHIER...')
-% ******************************************
 % RÉACTIVEZ LA BOUCLE AVANT DE POURSUIVRE!!!
 
     for i=2:npt
@@ -136,18 +134,29 @@ disp('IL FAUT PROGRAMMER LA BOUCLE...  VOIR LA SECTION CORRESPONDANTE DANS LE FI
         y=dx(i);            %Valeurs de la sortie (y(i)))
         h=[dx(i-1);u(i-1)]; %Valeurs des mesures (x(i-1))
         
-        % Calculs des matrices de la méthode
-        
-        
+        % Calculs des matrices de la méthode (Commentaire Alex : NDC p.407)
+        % Commentaire Alex :  matrice transposée sur Matlab ajouté un apostrophe : '
+        gamma = 1/(1+h'*P*h);
+        K = gamma*P*h;
+    
         % Calcul des estimés
-        
+        teta = teta + K*(y-(h'*teta)) ;
+        P = (P-(K*h'*P))/lambda; %lambda = facteur d'oubli il peut être négligé car =1
         
         
         % Conserver toutes les valeurs de P(1,1) et P(1,2)
-        
-        % Conserver les estimés de Tau et K
-        taue(i,1)=;
-        Ke(i,1)=;
+        P11(i) = P(1,1);
+        P12(i) = P(1,2);
+        tetam(i,:) = teta';
+
+    % Conserver les estimés de Tau et K
+        if teta(1) > 0 && teta(1) < 1       % éviter log d'un nombre invalide
+            taue(i,1) = -T/log(teta(1));
+            Ke(i,1)   = teta(2)/(1-teta(1));
+        else
+            taue(i,1) = taue(i-1,1);        % garder la dernière valeur valide
+            Ke(i,1)   = Ke(i-1,1);
+        end
     end
 % ***************************
 
