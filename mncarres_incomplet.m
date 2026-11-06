@@ -96,6 +96,7 @@ while ~fin_prog,
     disp(' ')
     disp('Covariance des estimations initiales des paramètres')
     disp(' ')
+    %COMMENTAIRE ALEX:ICI À CHANGER POUR LA DISCUSSION
     P=[ 1 0;
          0      1];
     disp(' ')
