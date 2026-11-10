@@ -1,0 +1,49 @@
+clear all; 
+PAR_PAL1_IDENT;
+ETAT_PAL_IDENT;
+
+%gain Kr
+k= 1;
+Kr = [k 0 0 0];
+
+%etat desirée
+
+xd = [0.5 0 0 0]';
+Tech = '0.0002';
+
+model ='Simulateur_palan';
+open_system(model);
+modelConfig = getActiveConfigSet(model);
+simConfig = copy(modelConfig);
+set_param(simConfig, StopTime = '20');
+set_param(simConfig,'SolverType', 'Fixed-step');
+set_param(simConfig, 'FixedStep', Tech);
+set_param(simConfig,'SolverName', 'ode4');
+out = sim(model);
+
+t = out.ScopeData(:,1);
+subplot(3,2,1);
+plot(t, out.ScopeData(:,2));
+ylabel("Commande (V)");
+xlabel("Temps (s)");
+
+
+subplot(3,2,2);
+plot(t, out.ScopeData1(:,2));
+ylabel("Position (m)");
+xlabel("Temps (s)");
+
+subplot(3,2,3);
+plot(t, out.ScopeData1(:,3));
+ylabel("Vitesse (m)");
+xlabel("Temps (s)");
+
+subplot(3,2,4);
+plot(t, out.ScopeData1(:,4));
+ylabel(" (m)");
+xlabel("Temps (s)");
+
+subplot(3,2,1);
+plot(t, out.ScopeData1(:,2));
+ylabel("Position (m)");
+xlabel("Temps (s)");

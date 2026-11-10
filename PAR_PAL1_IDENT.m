@@ -14,9 +14,9 @@ volt=24;            % Tension au moteur
 G=volt/psc;         % Gain
 
 %Kx = 0.3360;         % Gain du systeme ((m/s)/V)
-Kx=0.32;              % Gain du systeme ((m/s)/V)
+Kx=0.35;              % Gain du systeme ((m/s)/V)
 %TauX = 0.10;        % Constante de temps du systeme (s) Méthode graphique
-TauX = 0.12;        % Constante de temps du systeme (s) Moindre carrés
+TauX = 0.10;        % Constante de temps du systeme (s) Moindre carrés
 
         
 m1=7.8;             %Masse M1 du palan 1
@@ -26,8 +26,9 @@ pos_x_drt = 3;      % Position limite droite du palan (m)
 pos_x_gau = 0;   % Position limite gauche du palan (m)
 
 
-L = 1;          % Distance entre la charge et le palan 1 (m)
+%L = 1;          % Distance entre la charge et le palan 1 (m)
 L_min = 0.100;      % Distance minimum entre la charge et le palan (m)
 L_max = 1.400;      % Distance maximum entre la charge et le palan (m)
+
 
 %end. % PAR_PAL1
