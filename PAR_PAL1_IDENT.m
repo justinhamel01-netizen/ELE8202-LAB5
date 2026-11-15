@@ -14,9 +14,9 @@ volt=24;            % Tension au moteur
 G=volt/psc;         % Gain
 
 %Kx = 0.3360;         % Gain du systeme ((m/s)/V)
-Kx=0.35;              % Gain du systeme ((m/s)/V)
+%Kx=0.35;              % Gain du systeme ((m/s)/V)
 %TauX = 0.10;        % Constante de temps du systeme (s) Méthode graphique
-TauX = 0.10;        % Constante de temps du systeme (s) Moindre carrés
+%TauX = 0.10;        % Constante de temps du systeme (s) Moindre carrés
 
         
 m1=7.8;             %Masse M1 du palan 1

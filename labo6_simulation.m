@@ -1,5 +1,8 @@
 clear all; 
 L = 1;          % Distance entre la charge et le palan 1 (m)
+Kx=0.32;              % Gain du systeme ((m/s)/V) déterminé au labo 5
+TauX = 0.11;        % Constante de temps du systeme (s) déterminé au labo 5
+
 PAR_PAL1_IDENT;
 ETAT_PAL_IDENT;
 
@@ -9,7 +12,7 @@ Kr = [k 0 0 0];
 
 %etat desirée
 
-xd = [0.5 0 0 0]';
+xd = [0.1 0 0 0]';
 Tech = '0.0002';
 
 model ='Simulateur_palan';
@@ -27,29 +30,36 @@ subplot(3,2,1);
 plot(t, out.ScopeData(:,2));
 ylabel("Commande (V)");
 xlabel("Temps (s)");
+title ("Commande ")
+grid on;
 
 
 subplot(3,2,2);
 plot(t, out.ScopeData1(:,2));
 ylabel("Position (m)");
 xlabel("Temps (s)");
+grid on;
 
 subplot(3,2,3);
 plot(t, out.ScopeData1(:,3));
 ylabel("Vitesse (m/s)");
 xlabel("Temps (s)");
+grid on;
 
 subplot(3,2,4);
 plot(t, out.ScopeData1(:,4));
 ylabel(" \theta (rad)");
 xlabel("Temps (s)");
+grid on;
 
 subplot(3,2,5);
 plot(t, out.ScopeData1(:,5));
 ylabel("d\theta/dt(rad/s)");
 xlabel("Temps (s)");
+grid on;
 
 subplot(3,2,6);
 plot(t, out.ScopeData1(:,6));
 ylabel("y (m)");
 xlabel("Temps (s)");
+grid on;
