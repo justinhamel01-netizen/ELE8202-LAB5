@@ -5,15 +5,25 @@ TauX = 0.11;        % Constante de temps du systeme (s) déterminé au labo 5
 
 PAR_PAL1_IDENT;
 ETAT_PAL_IDENT;
+%Transfert vers ssystème discret avec c2d
+Tech = 0.002;
+sysc = ss(A,B,C,D);
+sysd = c2d(sysc,Tech);
+F = sysd.A;
+G = sysd.B;
+C = sysd.C;
+D = sysd.D;
+%% Plot
+
 
 %gain Kr
-k= 0.1;
+k= 5;
 Kr = [k 0 0 0];
 
 %etat desirée
 
 xd = [0.1 0 0 0]';
-Tech = '0.0002';
+Tech_string = '0.0002';
 
 model ='Simulateur_palan';
 open_system(model);
@@ -21,8 +31,8 @@ modelConfig = getActiveConfigSet(model);
 simConfig = copy(modelConfig);
 set_param(simConfig, StopTime = '20');
 set_param(simConfig,'SolverType', 'Fixed-step');
-set_param(simConfig, 'FixedStep', Tech);
-set_param(simConfig,'SolverName', 'ode4');
+set_param(simConfig, 'FixedStep', Tech_string);
+set_param(simConfig,'SolverName', 'FixedStepDiscrete');
 out = sim(model,simConfig);
 
 t = out.ScopeData(:,1);
