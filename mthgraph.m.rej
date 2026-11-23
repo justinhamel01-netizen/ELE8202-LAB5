@@ -1,0 +1,9 @@
+diff a/mthgraph.m b/mthgraph.m	(rejected hunks)
+@@ -29,6 +29,7 @@
+ %while ~fin_prog,
+    % clc;
+ for i=9:16
++    
+     disp('Identification des param�tres Kx et TauX par la m�thode graphique.')
+     disp('')
+ 

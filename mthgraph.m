@@ -24,11 +24,10 @@ clear;                  % Libérer la mémoire
 %
 %   DEBUT DU PROGRAMME
 %
-
+gain_tau = [0,0];
 fin_prog = 0;
-%while ~fin_prog,
+while ~fin_prog
    % clc;
-for i=9:16
     
     disp('Identification des paramètres Kx et TauX par la méthode graphique.')
     disp('')
@@ -51,7 +50,7 @@ for i=9:16
     grid
     %Tdeb = input('Quelle est le temps du début (pente constante) en s ? ');
     %Tfin = input('Quelle est le temps final (pente constante) en s ? ');
-     a=msgbox('Veuillez spécifier le temps de début (1) et de fin (2) de la pente linéaire','Entrée de l''usager requise','warn','modal');
+     % a=msgbox('Veuillez spécifier le temps de début (1) et de fin (2) de la pente linéaire','Entrée de l''usager requise','warn','modal');
     [Tdeb, Ty]=ginput(1);
     [Tfin, Ty]=ginput(1);
     Ideb = floor(Tdeb/Tech)+1;                     % Premier indice du vecteur
@@ -85,8 +84,13 @@ for i=9:16
     resultats = sprintf('Kx=%.3f(m/s)/V Tau12=%.2fs TauX=%.2fs ',...
                             Kx, Tau_12, Tau_x);
     resultats = [ resultats sprintf('M1=%.1fkg M2=%.1fkg',m1,m2) ];
+
+    if exist(gain_tau,"var")
+        gain_tau = [gain_tau; Kx, Tau_x];
+    else
+        gain_tau = [Kx, Tau_x];
+    end
     
-    gain_tau(i-9,:)=[Kx, Tau_x];
     % Calculer la droite tangente au vecteur de données
     Aff_droite = polyval(Coef_droite, [0 1.2*Tfin]);
 
