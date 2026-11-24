@@ -234,3 +234,155 @@ ylabel("y (m)");
 xlabel("Temps (s)");
 grid on;
 end
+%% generateur + lqr
+
+Tech = 0.0002;
+xd_ref = 0.5;
+% Gains LQR
+Kr = [9.9952 2.8361 -8.7562 1.2009];
+
+% Initialisation
+Performance_gen = [];
+s = tf('s');
+model_gen = 'Simulateur_palan_generateur_trajectoire';
+
+for wn = [4 5 6]
+    for zeta = [1 1.25 1.5 1.75 2]
+        % Calcul des parametres du generateur
+        k1 = 2*zeta/wn;
+        k2 = 1/wn^2;
+        % Fonctions de transfert continu
+        H_pos = 1/(k2*s^2 + k1*s + 1);
+        H_vit = s/(k2*s^2 + k1*s + 1);
+        % Transformation en discret
+        H_pos_d = c2d(H_pos, Tech);
+        H_vit_d = c2d(H_vit, Tech);
+
+        % Simulation
+        out = sim(model_gen,simConfig);
+        t = out.ScopeData1(:,1);
+        x = out.ScopeData1(:,2);
+        theta = out.ScopeData1(:,4);
+        y = out.ScopeData1(:,6);
+        u = out.ScopeData(:,2);
+
+        % Calcul des performances
+        info_x = stepinfo(x,t,xd_ref);
+        info_y = stepinfo(y,t,xd_ref);
+        temps_rep_3_x = info_x.SettlingTime;
+        temps_rep_3_y = info_y.SettlingTime;
+        depassement_x = info_x.Overshoot;
+        depassement_y = info_y.Overshoot;
+        peak_x = max(x);
+        peak_y = max(y);
+        peak_u = max(abs(u));
+        peak_theta = max(abs(theta));
+
+        Performance_gen = [Performance_gen;
+            k1 k2 temps_rep_3_y temps_rep_3_x ...
+            peak_theta peak_u depassement_y depassement_x];
+
+        % Affichage des courbes
+        % figure;
+        % plot_sim(out);
+        % sgtitle(sprintf('Generateur : k1 = %.4f, k2 = %.4f',k1,k2));
+
+    end
+end
+
+% Tableau des resultats
+T_performance_gen = array2table(Performance_gen, ...
+    'VariableNames', {'k1','k2','Temps_rep_y', ...
+    'Temps_rep_x1','Theta_max','U_max','Dep_y','Dep_x1'});
+
+disp(T_performance_gen); %k1=0.8 et k2= 0.04 semble le meilleur (depassement en y petit)
+%% 
+% %% generateur + placement de poles
+% R = 5.5;
+% 
+% poles_des = [-R, -1.01*R, ...
+%     -R*(cos(pi/4)+1i*sin(pi/4)), ...
+%     -R*(cos(pi/4)-1i*sin(pi/4))];
+% 
+% z_des = exp(poles_des*Tech);
+% 
+% Kr = place(F,G,z_des);
+% model_gen = 'Simulateur_palan_generateur_trajectoire';
+% 
+% % Initialisation
+% Performance_gen = [];
+% s = tf('s');
+% 
+% for wn = [2 3 4 5 6 7 8]
+%     for zeta = [1 1.25 1.5 1.75 2]
+% 
+%         % Calcul des parametres du generateur
+%         k1 = 2*zeta/wn;
+%         k2 = 1/wn^2;
+% 
+%         H_pos = 1/(k2*s^2 + k1*s + 1);
+%         H_vit = s/(k2*s^2 + k1*s + 1);
+% 
+%         % Transformation en discret
+%         H_pos_d = c2d(H_pos,Tech);
+%         H_vit_d = c2d(H_vit,Tech);
+% 
+%         % Simulation
+%         out = sim(model_gen,simConfig);
+%         t = out.ScopeData1(:,1);
+%         x = out.ScopeData1(:,2);
+%         theta = out.ScopeData1(:,4);
+%         y = out.ScopeData1(:,6);
+%         u = out.ScopeData(:,2);
+% 
+%         % Calcul des performances
+%         info_x = stepinfo(x,t,xd_ref);
+%         info_y = stepinfo(y,t,xd_ref);
+% 
+%         temps_rep_3_x = info_x.SettlingTime;
+%         temps_rep_3_y = info_y.SettlingTime;
+% 
+%         depassement_x = info_x.Overshoot;
+%         depassement_y = info_y.Overshoot;
+% 
+%         peak_theta = max(abs(theta));
+%         peak_u = max(abs(u));
+% 
+%         % Enregistrement des resultats
+%         Performance_gen = [Performance_gen;
+%             wn zeta k1 k2 ...
+%             temps_rep_3_y temps_rep_3_x ...
+%             peak_theta peak_u ...
+%             depassement_y depassement_x];
+% 
+%     end
+% end
+% 
+% % Tableau des resultats
+% T_performance_gen = array2table(Performance_gen, ...
+%     'VariableNames', {'wn','zeta','k1','k2', ...
+%     'Temps_rep_y','Temps_rep_x1', ...
+%     'Theta_max','U_max','Dep_y','Dep_x1'});
+% 
+% % Trier selon le temps de parcours
+% T_performance_gen = sortrows(T_performance_gen,'Temps_rep_y');
+% 
+% disp(T_performance_gen);
+% 
+% writetable(T_performance_gen,'Performance_generateur.xlsx');
+% 
+% 
+% k1 = 0.625;
+% k2 = 0.0625;
+% 
+% H_pos = 1/(k2*s^2 + k1*s + 1);
+% H_vit = s/(k2*s^2 + k1*s + 1);
+% 
+% H_pos_d = c2d(H_pos,Tech);
+% H_vit_d = c2d(H_vit,Tech);
+% 
+% out = sim(model_gen,simConfig);
+% 
+% figure;
+% plot_sim(out);
+% sgtitle('Placement de poles + generateur');
