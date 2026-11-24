@@ -17,7 +17,7 @@ D = sysd.D;
 xd = [0.5 0 0 0]';
 Tech_string = '0.0002';
 
-model ='Simulateur_palan';
+model ='Simulateur_palan_version2024';
 open_system(model);
 modelConfig = getActiveConfigSet(model);
 simConfig = copy(modelConfig);
@@ -29,7 +29,7 @@ set_param(simConfig,'SolverName', 'FixedStepDiscrete');
 %% Placement des poles
 Gain_pole = [];
 Performance = [];
-for R = 1:0.5:10
+for R = 4%1:0.5:10
     poles_des = [-R, -1.01*R, -R*(cos(pi/4)+1i*sin(pi/4)), -R*(cos(pi/4)-1i*sin(pi/4))];
     z_des = exp(poles_des*Tech);
     K = place(F,G, z_des);
@@ -42,6 +42,7 @@ for R = 1:0.5:10
 
 
     out = sim(model,simConfig);
+    plot_sim(out);
 
     t = out.ScopeData(:,1);
     info_x = stepinfo(out.ScopeData1(:,2),t);
@@ -59,7 +60,7 @@ for R = 1:0.5:10
 
     Performance = [Performance; R temps_rep_2_y temps_rep_2_x peak_y peak_x peak_theta peak_u depassement_y depassement_x];
 end
-
+%%
 T_performance = array2table(Performance, ...
     'VariableNames', {'R', 'Temps_rep_y', 'Temps_rep_x1', ...
     'ymax', 'x1max', 'thetamax', 'umax', ...
@@ -84,7 +85,7 @@ q3=10;
 q4=0;
 Gain_pole_LQR = [];
 Performance_LQR = [];
-for r1= [0.1,0.5,1,4,10]
+for r1 = 0.1 %[0.1,0.5,1,4,10]
 
     Q = [q1 0 0 0; 0 q2 0 0; 0 0 q3 0; 0 0 0 q4];
     R = r1;
@@ -111,10 +112,10 @@ for r1= [0.1,0.5,1,4,10]
     peak_y = info_y.Peak;
     peak_u = info_u.Peak;
     peak_theta = info_theta.Peak;
-
+    plot_sim(out);
     Performance_LQR = [Performance_LQR; R temps_rep_2_y temps_rep_2_x peak_y peak_x peak_theta peak_u depassement_y depassement_x];
 end
-
+%%
 T_performance_LQR = array2table(Performance_LQR, ...
     'VariableNames', {'R', 'Temps_rep_y', 'Temps_rep_x1', ...
     'ymax', 'x1max', 'thetamax', 'umax', ...
@@ -134,9 +135,11 @@ save("Performance_LQR","Performance_LQR")
 
 %% Robustesse
 
-Kr = [9.9952    2.8361   -8.7562    1.2009]; %Gains choisi (LQR: R = 0.1 q1 =q2 = 10
+% Kr = [9.0560    4.5832  -13.7344    2.9998]; %Gains choisi avec placement pole R= 4
+Kr = [9.0560    4.5832  -13.7344    0.1]; % gain ajust/ pour la longueur de L en reduisant k4
 M2_vec = [0.1*m2 15*m2 m2 m2 m2];
 M1 = m1;
+L=1;
 L_vec = [L L 0.1*L 10*L L];
 
 for i = 1:5
@@ -244,7 +247,7 @@ Kr = [9.9952 2.8361 -8.7562 1.2009];
 % Initialisation
 Performance_gen = [];
 s = tf('s');
-model_gen = 'Simulateur_palan_generateur_trajectoire';
+model_gen = 'Simulateur_palan_generateur_trajectoire_version2024';
 
 for wn = [4 5 6]
     for zeta = [1 1.25 1.5 1.75 2]
